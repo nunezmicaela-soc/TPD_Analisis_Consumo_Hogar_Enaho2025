@@ -25,6 +25,25 @@ install.packages("gh")
 install.packages("gitcreds")
 usethis::use_github()
 
+remove.packages("usethis")
+remove.packages("gh")
+remove.packages("gitcreds")
+
+install.packages("usethis")
+install.packages("gh")
+install.packages("gitcreds")
+
+usethis::use_git()
+usethis::use_github()
+usethis::create_github_token()
+gitcreds::gitcreds_set()
+gitcreds::gitcreds_get()
+usethis::use_github()
+
+
+
+
+
 
 
 
