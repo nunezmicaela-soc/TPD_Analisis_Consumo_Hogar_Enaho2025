@@ -15,4 +15,3 @@ dir.create("docs")
 install.packages("usethis")
 usethis::use_git_config(user.name = "nunez.micaela-soc", user.email = "nunez.micaela@pucp.edu.pe")
 usethis::use_git()
-
