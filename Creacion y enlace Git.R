@@ -49,7 +49,8 @@ usethis::use_github()
 git remote add origin https://github.com/nunezmicaela-soc/PC3_TPD.git
 git branch -M main
 git push -u origin main
-
+usethis::create_github_token()
+gitcreds::gitcreds_set()
 
 
 
