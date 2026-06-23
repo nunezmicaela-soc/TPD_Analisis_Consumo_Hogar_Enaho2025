@@ -49,6 +49,12 @@ mod606_hogar <- mod606 %>%
 enaho_2025 <- mod601_hogar %>%
   left_join(mod606_hogar, by = keys_hogar)
 
+#4. Exportamos base de datos creada------------------------
+renv::snapshot() 
+library(arrow)
+write_parquet(enaho_2025, "datos/procesados/enaho_2025_230626.parquet")
+enaho_2025 <- read_parquet("datos/procesados/enaho_2025_230626.parquet")
+
 
   
   
