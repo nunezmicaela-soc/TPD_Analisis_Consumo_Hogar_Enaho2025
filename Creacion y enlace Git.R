@@ -53,5 +53,6 @@ git push -u origin main
 usethis::create_github_token()
 gitcreds::gitcreds_set()
 
-
-
+#4. Exportamos base de datos creada--------------------------------------
+install.packages("arrow")
+renv::snapshot()
