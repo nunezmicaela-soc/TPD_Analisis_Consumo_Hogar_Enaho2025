@@ -201,8 +201,25 @@ ggplot(enaho, aes(x = alimentos, y = cultura)) +
 #Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
 library(readr)
 # Debido a que la base tiene una sola columna separado por ";" read_delim (más explícito)
+ubigeo_catalogo <- read_csv2("datos/crudos/ubigeo_inei_2025.csv")
 ubigeo_catalogo <- read_delim("datos/crudos/ubigeo_inei_2025.csv", delim = ";")
+glimpse(ubigeo_catalogo)
 
+#La base consolidada tiene la columna de ubigeo con 5 digitos, mientras que el catalogo que baje 6 digitos
+#Reducir el catalogo a 5 digitos 
+ubigeo_catalogo <- ubigeo_catalogo %>%
+  mutate(ubigeo5 = substr(ubigeo, 1, 5)) %>%   # recorta a 5 dígitos
+  select(ubigeo5, departamento, provincia, distrito) %>%
+  distinct()
 
+#reducir a nivel de provincia
+ubigeo_provincia <- ubigeo_catalogo %>%
+  group_by(ubigeo5) %>%
+  summarise(provincia = first(provincia)) %>%
+  ungroup()
 
+#hacer el join
+enaho <- enaho %>%
+  mutate(region = as.character(region)) %>%
+  left_join(ubigeo_provincia, by = c("region" = "ubigeo5"))
 
