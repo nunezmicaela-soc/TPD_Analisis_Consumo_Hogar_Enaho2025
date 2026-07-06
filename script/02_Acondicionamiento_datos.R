@@ -45,7 +45,7 @@ library(tidyverse)
 library(arrow)
 enaho_raw <- read_parquet("datos/procesados/enaho_2025_230626.parquet")
 
-#Seleccion y renombrado de variables 
+#Prueba de seleccion y renombrado de variables 
 enaho <- enaho_raw %>%
   select(AÑO, MES, UBIGEO, gasto_alimentos, gasto_cultura) %>%
   rename(
@@ -55,6 +55,38 @@ enaho <- enaho_raw %>%
     alimentos = gasto_alimentos,
     cultura = gasto_cultura
   )
+names(enaho_raw)
+-----------------------------------------------------------------------------
+# 1. SELECCIÓN, RENOMBRADO Y DIAGNÓSTICO
+# ------------------------------------------------------------------------------
+#Seleccion y renombre
+enaho <- enaho_raw %>%
+  select(
+    año = AÑO,
+    mes = MES,
+    conglome = CONGLOME,
+    vivienda = VIVIENDA,
+    hogar    = HOGAR,
+    ubigeo   = UBIGEO,
+    dominio  = DOMINIO,
+    estrato  = ESTRATO,
+    nconglome = NCONGLOME,
+    subconglome = SUB_CONGLOME,
+    gasto_alimentos,
+    gasto_cultura
+  ) %>%
+  rename(
+    year     = año,
+    month    = mes,
+    region   = ubigeo,
+    alimentos = gasto_alimentos,
+    cultura   = gasto_cultura
+  )
 
+# Inspección inicial
+dim(enaho)
+names(enaho)
+glimpse(enaho)
+summary(enaho)
 
 
