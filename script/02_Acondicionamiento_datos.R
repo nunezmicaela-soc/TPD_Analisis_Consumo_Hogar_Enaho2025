@@ -198,3 +198,11 @@ ggplot(enaho, aes(x = alimentos, y = cultura)) +
   ) +
   theme_minimal()
 
+#Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
+library(readr)
+# Debido a que la base tiene una sola columna separado por ";" read_delim (más explícito)
+ubigeo_catalogo <- read_delim("datos/crudos/ubigeo_inei_2025.csv", delim = ";")
+
+
+
+
