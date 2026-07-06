@@ -120,4 +120,36 @@ reporte_nas <- enaho %>%
 
 write_csv(reporte_nas, "outputs/Reporte_Datos_Perdidos_ENAHO.csv")
 
+# 3. RECODIFICACIÓN DE CÓDIGOS ESPECIALES Y TIPOS DE DATOS ---------------------
+# ------------------------------------------------------------------------------
+
+# 3.1 Recodificación de códigos especiales (98, 99, 999)
+# Según el diccionario ENAHO, estos valores representan "no sabe / no responde".
+# Los convertimos a NA para evitar sesgos en cálculos posteriores.
+
+enaho <- enaho %>%
+  mutate(
+    alimentos = na_if(alimentos, 98),
+    alimentos = na_if(alimentos, 99),
+    cultura   = na_if(cultura, 98),
+    cultura   = na_if(cultura, 99)
+  )
+
+# Comentario:
+# Los códigos 98/99 en los módulos de gasto representan "no sabe / no responde".
+# Se convierten a NA antes de calcular promedios o totales de consumo.
+#Aunque en los módulos gasto no aparecen valores peridos, documentamos esto como parte del diagnostico de NAs
+#Si apareciera el código 99 ("no responde"), se convierte en NA. 
+# 3.2 Ajuste de tipos de datos
+# Revisamos los tipos con glimpse()
+glimpse(enaho)
+
+# Convertimos variables categóricas a factor
+enaho <- enaho %>%
+  mutate(
+    region   = as.character(region),   # UBIGEO como texto para unir con catálogo
+  )
+# Comentario metodológico:
+# UBIGEO se convierte a character para facilitar joins con catálogos oficiales.
+# Los gastos se aseguran como numéricos para cálculos estadísticos. 
 
