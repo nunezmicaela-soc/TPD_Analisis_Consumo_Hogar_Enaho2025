@@ -218,8 +218,23 @@ ubigeo_provincia <- ubigeo_catalogo %>%
   summarise(provincia = first(provincia)) %>%
   ungroup()
 
+str(enaho$region)
+head(ubigeo_catalogo$ubigeo5)
+
 #hacer el join
 enaho <- enaho %>%
   mutate(region = as.character(region)) %>%
   left_join(ubigeo_provincia, by = c("region" = "ubigeo5"))
 
+#eliminar las columnas repetidas del join fallido 
+enaho <- enaho %>%
+  select(-ends_with(".x"), -ends_with(".y"))
+
+#eliminar filas con NA en las variables geograficas 
+enaho <- enaho %>%
+  filter(!is.na(provincia), !is.na(distrito))
+
+#Verificar que quedo limpio 
+glimpse(enaho)
+count(enaho, distrito)
+count(enaho, provincia)
