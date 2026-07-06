@@ -37,4 +37,10 @@ pkgbuild::has_build_tools(debug = TRUE)
 # Actualizar snapshot de renv cuando ya todo está instalado
 renv::snapshot()
 
-
+# ------------------------------------------------------------------------------
+# 1. CARGA, SELECCIÓN, RENOMBRADO Y DIAGNÓSTICO---------------------------------
+# ------------------------------------------------------------------------------
+# Leemos la base consolidada de la PC3
+library(tidyverse)
+library(arrow)
+enaho_raw <- read_parquet("datos/procesados/enaho_2025_230626.parquet")
