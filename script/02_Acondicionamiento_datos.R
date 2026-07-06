@@ -44,3 +44,17 @@ renv::snapshot()
 library(tidyverse)
 library(arrow)
 enaho_raw <- read_parquet("datos/procesados/enaho_2025_230626.parquet")
+
+#Seleccion y renombrado de variables 
+enaho <- enaho_raw %>%
+  select(AÑO, MES, UBIGEO, gasto_alimentos, gasto_cultura) %>%
+  rename(
+    year = AÑO,
+    month = MES,
+    region = UBIGEO,
+    alimentos = gasto_alimentos,
+    cultura = gasto_cultura
+  )
+
+
+
