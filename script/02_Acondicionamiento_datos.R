@@ -153,3 +153,48 @@ enaho <- enaho %>%
 # UBIGEO se convierte a character para facilitar joins con catálogos oficiales.
 # Los gastos se aseguran como numéricos para cálculos estadísticos. 
 
+# 4. EXPLORACIÓN DESCRIPTIVA DE GASTOS------------------------------------------
+# ------------------------------------------------------------------------------
+
+# 4.1 Estadísticas básicas
+resumen_gastos <- enaho %>%
+  summarise(
+    promedio_alimentos = mean(alimentos, na.rm = TRUE),
+    mediana_alimentos  = median(alimentos, na.rm = TRUE),
+    promedio_cultura   = mean(cultura, na.rm = TRUE),
+    mediana_cultura    = median(cultura, na.rm = TRUE)
+  )
+print(resumen_gastos)
+
+# 4.2 Distribución de gastos
+# Histograma de gasto en alimentos
+ggplot(enaho, aes(x = alimentos)) +
+  geom_histogram(binwidth = 50, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribución del gasto en alimentos",
+    x = "Gasto en alimentos (S/.)",
+    y = "Número de hogares"
+  ) +
+  theme_minimal()
+
+# Histograma de gasto en cultura
+ggplot(enaho, aes(x = cultura)) +
+  geom_histogram(binwidth = 20, fill = "darkorange", color = "white") +
+  labs(
+    title = "Distribución del gasto en cultura",
+    x = "Gasto en cultura (S/.)",
+    y = "Número de hogares"
+  ) +
+  theme_minimal()
+
+# 4.3 Comparación simple
+# Relación entre gasto en alimentos y cultura
+ggplot(enaho, aes(x = alimentos, y = cultura)) +
+  geom_point(alpha = 0.4, color = "purple") +
+  labs(
+    title = "Relación entre gasto en alimentos y cultura",
+    x = "Gasto en alimentos (S/.)",
+    y = "Gasto en cultura (S/.)"
+  ) +
+  theme_minimal()
+
