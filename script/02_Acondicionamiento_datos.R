@@ -238,3 +238,8 @@ enaho <- enaho %>%
 glimpse(enaho)
 count(enaho, distrito)
 count(enaho, provincia)
+
+#Exportar 
+library(dplyr)
+library(arrow)
+write_parquet(enaho, "datos/procesados/enaho_2025_provincias.parquet")
