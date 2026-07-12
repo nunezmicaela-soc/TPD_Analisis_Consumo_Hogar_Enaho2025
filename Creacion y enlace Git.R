@@ -23,41 +23,9 @@ library(gitcreds)
 usethis::use_git_config(user.name = "nunez.micaela-soc", user.email = "nunez.micaela@pucp.edu.pe")
 usethis::use_git()
 
-
-install.packages("gitcreds")
-usethis::create_github_token()
-gitcreds::gitcreds_set()
-install.packages("gh")
-usethis::use_github()
-install.packages("usethis")
-install.packages("gh")
-install.packages("gitcreds")
-usethis::use_github()
-
-remove.packages("usethis")
-remove.packages("gh")
-remove.packages("gitcreds")
-
-install.packages("usethis")
-install.packages("gh")
-install.packages("gitcreds")
-
-usethis::use_git()
-usethis::use_github()
-usethis::create_github_token()
-gitcreds::gitcreds_set()
+# Verfificar token anterior esta activo y guardado
 gitcreds::gitcreds_get()
-usethis::use_github()
-usethis::use_git_remote("origin", url = NULL, overwrite = TRUE)`
-usethis::use_github()
 
-usethis::use_git_config(user.name = "nunez.micaela-soc", user.email = "nunez.micaela@pucp.edu.pe")
-usethis::use_git()
-usethis::use_github()
 
-git remote add origin https://github.com/nunezmicaela-soc/PC3_TPD.git
-git branch -M main
-git push -u origin main
-usethis::create_github_token()
-gitcreds::gitcreds_set()
+
 
