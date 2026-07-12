@@ -1,25 +1,21 @@
 #====================================================================
-#Proyecto: Análisis de Esparcimiento, diversión y servicios de cultura usando datos de la Enaho para PC3
-#Script: Cargar los módulos y hacer los joins 
-#Autor: Micaela Nuñez 
-#Fecha: 22-06-26
+#Trabajo final . Taller de Procesamiento de Datos  
+#Autora: Micaela Nuñez Cordero
+#Objetivo de script: Cargar los módulos, gestionar y hacer joins
+#Módulos: Gastos del hogar en alimentos y bebidas (600); servicios a la vivienda (605); esparcimiento, diversión y servicios de cultura (606); bienes y servicios de cuidado personal (606D)
+#Fecha: 12 de julio del 2026
 #=====================================================================
 
 #1. Carga de librerias----------------------------------------------------
-install.packages("tidyverse")
 library(tidyverse)
-install.packages("rio")
 library(rio)
 library(readr)
-install.packages("janitor")
 library(janitor)
-install.packages("renv")
+library(arrow)
+library(naniar)
 
-library(readr)
-renv::init()
-renv::snapshot()
 
-#2. Importar datos
+#2. Definir ruta de datos 
 library(rio)
 mod601 <- import("datos/crudos/Enaho01-2025-601.csv", encoding="Latin-1")
 mod606 <- import("datos/crudos/Enaho01-2025-606.csv", encoding="Latin-1")
