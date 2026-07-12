@@ -15,8 +15,15 @@ dir.create("scripts")
 
 #Enlace con Git y Github 
 install.packages("usethis")
+install.packages("gitcreds")
+
+library(usethis)
+library(gitcreds)
+
 usethis::use_git_config(user.name = "nunez.micaela-soc", user.email = "nunez.micaela@pucp.edu.pe")
 usethis::use_git()
+
+
 install.packages("gitcreds")
 usethis::create_github_token()
 gitcreds::gitcreds_set()
