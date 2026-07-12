@@ -27,21 +27,48 @@ Este proyecto corresponde al curso **Taller de Procesamiento de Datos** (Sociolo
 El objetivo es **acondicionar** los microdatos de la **ENAHO 2025**, integrando los módulos de gasto en alimentos (601) y cultura/esparcimiento (606) para obtener una base a nivel de hogar.  
 Se busca explorar patrones de consumo en los hogares peruanos.
 
-## Estructura de carpetas
-- `datos/crudos/` → Archivos originales descargados de ENAHO  
+## 📂 Estructura de carpetas
+- `datos/crudos/` → Archivos originales descargados de ENAHO y catálogo UBIGEO  
 - `datos/procesados/` → Archivos transformados y exportados (ej. parquet)  
 - `scripts/` → Código en R para importación, limpieza, unión y exportación  
 - `docs/` → Documentación y cuestionarios de los módulos  
 - `outputs/` → Resultados finales (tablas, gráficos)
 
-## Flujo de trabajo
-1. Importación de módulos 601 y 606 en R.  
-2. Conversión de variables de monto a numéricas.  
-3. Agregación de gastos por hogar.  
-4. Unión de módulos mediante llaves del hogar.  
-5. Exportación final en formato Parquet.  
+## 🔄 Flujo de trabajo
 
-## Resultado
-Se obtuvo una base consolidada (`enaho_2025.parquet`) con una fila por hogar que contiene:  
+1. **Importación de datos**  
+   - Lectura de los módulos de gasto en alimentos y cultura.  
+   - Consolidación en una base única (`enaho_raw`).  
+
+2. **Selección y renombrado de variables**  
+   - Variables clave: `year`, `month`, `conglome`, `vivienda`, `hogar`, `region` (UBIGEO), `dominio`, `estrato`, `alimentos`, `cultura`.  
+   - Renombrado para estandarizar nombres y facilitar el análisis.
+
+3. **Diagnóstico y limpieza**  
+   - Conversión de variables numéricas.  
+   - Recodificación de valores perdidos (`98`, `99` → `NA`).  
+   - Eliminación de columnas duplicadas generadas por joins previos (`.x`, `.y`).  
+   - Filtrado de filas con `NA` en variables geográficas.
+
+4. **Integración con catálogo UBIGEO**  
+   - Reducción del catálogo a 5 dígitos (`ubigeo5`).  
+   - Unión a nivel **provincia** (`region ~ ubigeo5`).  
+   - Incorporación de nombres de `departamento`, `provincia`, `distrito`.
+  
+5. **Exportación final**  
+   - Base consolidada limpia guardada en formato Parquet:  
+     ```
+     datos/procesados/enaho_2025_provincias.parquet
+     ```
+     
+## ✅ Resultado
+Se obtuvo una base consolidada (`enaho_2025_provincias.parquet`) con una fila por hogar que contiene:  
 - Gasto total en alimentos y bebidas.  
 - Gasto total en cultura y esparcimiento.  
+- Variables de identificación geográfica (departamento, provincia, distrito).  
+
+## 📌 Próximos pasos
+- Elaborar **scripts de exploración**:  
+  - Tablas descriptivas por provincia y departamento.  
+  - Gráficos de gasto promedio en alimentos y cultura.  
+  - Diagnóstico de valores perdidos y distribución de variables.
