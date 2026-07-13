@@ -38,5 +38,17 @@ reporte_nas500 <- ingresos_sel %>%
   summarise(across(everything(), ~ round(sum(is.na(.)) / n() * 100, 2))) %>%
   pivot_longer(everything(), names_to = "variable", values_to = "porcentaje_na")
 
-write_csv(reporte_nas, "outputs/Reporte_NAs_Mod500.csv")
+write_csv(reporte_nas500, "outputs/Reporte_NAs_Mod500.csv")
 
+# 4. TRATAMIENTO DE NAs --------------------------------------------------------
+ingresos_tratados <- ingresos_sel %>%
+  mutate(
+    ingreso_dep            = na_if(ingreso_dep, 999999),
+    ingreso_indep_dinero   = na_if(ingreso_indep_dinero, 999999),
+    ingreso_indep_especie  = na_if(ingreso_indep_especie, 999999)
+  ) %>%
+  mutate(
+    ingreso_dep            = replace_na(ingreso_dep, median(ingreso_dep, na.rm = TRUE)),
+    ingreso_indep_dinero   = replace_na(ingreso_indep_dinero, median(ingreso_indep_dinero, na.rm = TRUE)),
+    ingreso_indep_especie  = replace_na(ingreso_indep_especie, median(ingreso_indep_especie, na.rm = TRUE))
+  )
