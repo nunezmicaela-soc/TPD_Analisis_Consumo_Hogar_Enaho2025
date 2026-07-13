@@ -53,7 +53,34 @@ Los módulos de gasto tienen distintos períodos de referencia (15 días, mensua
 3. Exportación de base consolidada
 - La columna region6 se mantiene como clave geográfica normalizada a 6 dígitos.
 - Se incorporaron los nombres de departamento, provincia y distrito desde el catálogo INEI.
-- Se exportó la base consolidada en formato Parquet:
+- Se exportó la base consolidada en formato Parquet
+
+4. Nota metodológica
+- La integración de UBIGEO permite trabajar tanto con claves geográficas como con nombres de lugares, facilitando análisis comparativos por provincia y distrito.
+  
+## EXPLORAR 
+1. Construcción de variables
+- Gasto total: se creó sumando las partidas de alimentos, cultura, vivienda/servicios y cuidados personales.
+- Ingreso total: se construyó a partir del módulo 500, sumando ingresos dependientes, independientes en dinero e independientes en especie, y luego agregando a nivel hogar.
+
+2. Exploración del gasto total
+- Se calcularon estadísticos descriptivos: mínimo, cuartiles, mediana, promedio y máximo.
+- Se generó un histograma de la distribución del gasto total (con corte en 5000 S/ para evitar valores extremos).
+
+3. Outputs exportados:
+- Tabla_Estadisticos_Gasto.csv
+- Grafico_Histograma_Gasto.png
+
+4. Exploración del ingreso total
+- Se calcularon estadísticos descriptivos: mínimo, cuartiles, mediana, promedio y máximo.
+- Se generó un histograma de la distribución del ingreso total (con corte en 20000 S/ para evitar valores extremos).
+- no se exporto outputs 
+
+5. Limitaciones encontradas
+- No se logró avanzar hacia el contraste entre gasto e ingreso por errores en la integración de las bases.
+- Los intentos de graficar el contraste resultaron en errores de depuración (browser) y gráficos vacíos.
+- No se pudo construir la tabla de quintiles ni realizar el análisis comparativo.
+- Tampoco se alcanzó a integrar la información de UBIGEO por problemas de formato y coincidencia de códigos.
 
 ---
 
