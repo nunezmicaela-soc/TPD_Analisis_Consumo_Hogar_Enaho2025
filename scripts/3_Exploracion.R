@@ -104,3 +104,30 @@ ingreso_hogar <- ingresos_tratados %>%
   )
 #Exportar ingreso total por hogar
 write_csv(ingreso_hogar, "datos/procesados/enaho_2025_ingreso_total.csv")
+
+#2. CONTRASTE GASTO E INGRESO 
+library(tidyverse)
+library(scales)
+
+# Cargar ingreso total por hogar
+ingreso_hogar <- read_csv("datos/procesados/enaho_2025_ingreso_total.csv")
+
+# Consolidar gasto e ingreso por hogar
+contraste <- enaho %>%
+  select(CONGLOME, VIVIENDA, HOGAR, gasto_total) %>%
+  inner_join(ingreso_hogar, by = c("CONGLOME","VIVIENDA","HOGAR"))
+
+glimpse(contraste)
+nrow(contraste)
+
+#graficar 
+grafico_ingreso <- ggplot(ingreso_hogar %>% filter(ingreso_total > 0, ingreso_total < 20000),
+                          aes(x = ingreso_total)) +
+  geom_histogram(fill = "#2E5B88", color = "white", bins = 50) +
+  scale_x_continuous(labels = comma) +
+  labs(title = "Distribución del ingreso total del hogar (<20000 S/)",
+       x = "Ingreso mensual (S/)", y = "Frecuencia")
+
+ggsave(file.path(ruta_salida, "Grafico_Histograma_Ingreso.png"),
+       plot = grafico_ingreso, width = 8, height = 5, bg = "white")
+
