@@ -79,3 +79,13 @@ ggplot(enaho, aes(x = ingreso_promedio)) +
   scale_x_continuous(labels = comma) +
   labs(title = "Distribución del ingreso laboral promedio",
        x = "Ingreso mensual (S/)", y = "Frecuencia")
+
+# Crear carpeta de salida 
+ruta_salida <- "outputs/outputs_exploracion"
+if (!dir.exists(ruta_salida)) {
+  dir.create(ruta_salida, recursive = TRUE)
+}
+
+# Exportar tablas descriptivas
+write_csv(summary_gasto, file.path(ruta_salida, "Tabla_Estadisticos_Gasto.csv"))
+write_csv(summary_ingreso, file.path(ruta_salida, "Tabla_Estadisticos_Ingreso.csv"))
