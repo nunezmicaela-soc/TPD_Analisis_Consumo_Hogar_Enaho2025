@@ -122,8 +122,8 @@ anti_join(enaho %>% select(region6) %>% distinct(),
           ubigeo_catalogo,
           by = c("region6" = "ubigeo"))
 
-
-#Exportar 
+#Exportar
 library(dplyr)
 library(arrow)
+
 write_parquet(enaho, "datos/procesados/enaho_2025_provincias.parquet")
