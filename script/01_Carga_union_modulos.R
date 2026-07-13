@@ -51,20 +51,35 @@ mod606 <- mod606 %>%
 mod605 <- mod605 %>% 
   mutate(P605B = as.numeric(P605B))
 
-mod606D <- mod606d %>% 
+mod606D <- mod606D %>% 
   mutate(P606F = as.numeric(P606F))
 
-
+#Agrupar y resumir 
+ 
+mod601 <- mod601 %>%
   group_by(across(all_of(keys_hogar))) %>%
   summarise(gasto_alimentos = sum(P601C, na.rm = TRUE), .groups = "drop")
 
 mod606_hogar <- mod606 %>%
-  mutate(P606B = as.numeric(P606B)) %>%
   group_by(across(all_of(keys_hogar))) %>%
   summarise(gasto_cultura = sum(P606B, na.rm = TRUE), .groups = "drop")
 
+mod605_hogar <- mod605 %>%
+  group_by(across(all_of(keys_hogar))) %>%
+  summarise(gasto_vivienda = sum(P605B, na.rm = TRUE), .groups = "drop")
+
+mod606D_hogar <- mod606D %>%
+  group_by(across(all_of(keys_hogar))) %>%
+  summarise(gasto_cuidados = sum(P606F, na.rm = TRUE), .groups = "drop")
+
 enaho_2025 <- mod601_hogar %>%
   left_join(mod606_hogar, by = keys_hogar)
+
+#4. Unimos las bases resumidas 
+enaho_2025 <- mod601_hogar %>%
+  left_join(mod606_hogar,  by = keys_hogar) %>%
+  left_join(mod605_hogar,  by = keys_hogar) %>%
+  left_join(mod606D_hogar, by = keys_hogar)
 
 #4. Exportamos base de datos creada------------------------
 renv::snapshot() 
