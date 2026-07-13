@@ -52,7 +52,7 @@ enaho <- enaho_raw %>%
     region    = ubigeo,
     alimentos = gasto_alimentos,
     cultura   = gasto_cultura,
-    vivienda  = gasto_vivienda,
+    vivienda_servicios  = gasto_vivienda,
     cuidados_personales  = gasto_cuidados
   )
 
@@ -62,16 +62,15 @@ names(enaho)
 glimpse(enaho)
 summary(enaho)
 
-# 2. DIAGNÓSTICO DE NAs Y REPORTE-----------------------------------------------
+# 3. DIAGNÓSTICO DE NAs Y REPORTE-----------------------------------------------
 # ------------------------------------------------------------------------------
 
-# 2.1 Visualización Gráfica (naniar)
+# 3.1 Visualización gráfica de NAs por variable
 # Creamos un gráfico de barras que muestra la cantidad de NAs por variable
-library(naniar)
 grafico_nas <- gg_miss_var(enaho, show_pct = TRUE) +
   labs(
     title = "Porcentaje de Valores Perdidos (NAs) por Variable",
-    subtitle = "Proyecto: Análisis de consumo en los hogares peruanos usando datos de la ENAHO (2025)",
+    subtitle = "ENAHO 2025 - Proyecto de procesamiento",
     y = "% de Valores Perdidos",
     x = "Variables"
   ) +
@@ -81,10 +80,11 @@ grafico_nas <- gg_miss_var(enaho, show_pct = TRUE) +
 print(grafico_nas)
 
 # Exportamos el gráfico a nuestra carpeta de outputs
-ggsave("outputs/Grafico_NAs_ENAHO.png", plot = grafico_nas, 
+ggsave("03_outputs/Grafico_NAs_ENAHO.png", plot = grafico_nas,
        width = 8, height = 6, bg = "white")
+  theme_minimal()
 
-# 2.2 Reporte Tabular
+# 3.2 Reporte Tabular
 # Calculamos el % de NAs por variable y lo guardamos en CSV
 reporte_nas <- enaho %>%
   summarise(across(everything(), ~ round(sum(is.na(.)) / n() * 100, 2))) %>%
@@ -93,83 +93,7 @@ reporte_nas <- enaho %>%
 
 write_csv(reporte_nas, "outputs/Reporte_Datos_Perdidos_ENAHO.csv")
 
-# 3. RECODIFICACIÓN DE CÓDIGOS ESPECIALES Y TIPOS DE DATOS ---------------------
-# ------------------------------------------------------------------------------
 
-# 3.1 Recodificación de códigos especiales (98, 99, 999)
-# Según el diccionario ENAHO, estos valores representan "no sabe / no responde".
-# Los convertimos a NA para evitar sesgos en cálculos posteriores.
-
-enaho <- enaho %>%
-  mutate(
-    alimentos = na_if(alimentos, 98),
-    alimentos = na_if(alimentos, 99),
-    cultura   = na_if(cultura, 98),
-    cultura   = na_if(cultura, 99)
-  )
-
-# Comentario:
-# Los códigos 98/99 en los módulos de gasto representan "no sabe / no responde".
-# Se convierten a NA antes de calcular promedios o totales de consumo.
-#Aunque en los módulos gasto no aparecen valores peridos, documentamos esto como parte del diagnostico de NAs
-#Si apareciera el código 99 ("no responde"), se convierte en NA. 
-# 3.2 Ajuste de tipos de datos
-# Revisamos los tipos con glimpse()
-glimpse(enaho)
-
-# Convertimos variables categóricas a factor
-enaho <- enaho %>%
-  mutate(
-    region   = as.character(region),   # UBIGEO como texto para unir con catálogo
-  )
-# Comentario metodológico:
-# UBIGEO se convierte a character para facilitar joins con catálogos oficiales.
-# Los gastos se aseguran como numéricos para cálculos estadísticos. 
-
-# 4. EXPLORACIÓN DESCRIPTIVA DE GASTOS------------------------------------------
-# ------------------------------------------------------------------------------
-
-# 4.1 Estadísticas básicas
-resumen_gastos <- enaho %>%
-  summarise(
-    promedio_alimentos = mean(alimentos, na.rm = TRUE),
-    mediana_alimentos  = median(alimentos, na.rm = TRUE),
-    promedio_cultura   = mean(cultura, na.rm = TRUE),
-    mediana_cultura    = median(cultura, na.rm = TRUE)
-  )
-print(resumen_gastos)
-
-# 4.2 Distribución de gastos
-# Histograma de gasto en alimentos
-ggplot(enaho, aes(x = alimentos)) +
-  geom_histogram(binwidth = 50, fill = "steelblue", color = "white") +
-  labs(
-    title = "Distribución del gasto en alimentos",
-    x = "Gasto en alimentos (S/.)",
-    y = "Número de hogares"
-  ) +
-  theme_minimal()
-
-# Histograma de gasto en cultura
-ggplot(enaho, aes(x = cultura)) +
-  geom_histogram(binwidth = 20, fill = "darkorange", color = "white") +
-  labs(
-    title = "Distribución del gasto en cultura",
-    x = "Gasto en cultura (S/.)",
-    y = "Número de hogares"
-  ) +
-  theme_minimal()
-
-# 4.3 Comparación simple
-# Relación entre gasto en alimentos y cultura
-ggplot(enaho, aes(x = alimentos, y = cultura)) +
-  geom_point(alpha = 0.4, color = "purple") +
-  labs(
-    title = "Relación entre gasto en alimentos y cultura",
-    x = "Gasto en alimentos (S/.)",
-    y = "Gasto en cultura (S/.)"
-  ) +
-  theme_minimal()
 
 #Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
 library(readr)
