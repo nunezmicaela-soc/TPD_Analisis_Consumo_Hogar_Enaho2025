@@ -93,16 +93,9 @@ reporte_nas <- enaho %>%
 
 write_csv(reporte_nas, "outputs/Reporte_Datos_Perdidos_ENAHO.csv")
 
-#3.3 Importamos base de datos de empleo e ingreso módulo 500
-#Carga de base de datos
-mod500 <- import ("datos/crudos/Enaho01a-2025-500.csv")
+#No tiene valores perdidos, por esos e opto por hacer otro script a parte con el modulo de ingresos para hacer el contraste posterior entre ingresos y gastos, y como el objetivo es trabajarlo por regiones, se agregara la de UBIGEO. 
 
-# Seleccionamos ingreso principal y llaves de persona
-ingresos_sel <- mod500 %>%
-  select(AÑO, MES, CONGLOME, VIVIENDA, HOGAR, CODPERSO,
-         ingreso_prin = P524A1)
-
-#Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
+#3.3 Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
 library(readr)
 # Debido a que la base tiene una sola columna separado por ";" read_delim (más explícito)
 ubigeo_catalogo <- read_csv2("datos/crudos/ubigeo_inei_2025.csv")
@@ -125,23 +118,22 @@ ubigeo_provincia <- ubigeo_catalogo %>%
 str(enaho$region)
 head(ubigeo_catalogo$ubigeo5)
 
+# Normalizar region en enaho a 5 dígitos con ceros a la izquierda
+enaho <- enaho %>%
+  mutate(region = str_pad(region, 5, pad = "0"))
+
 #hacer el join
 enaho <- enaho %>%
-  mutate(region = as.character(region)) %>%
   left_join(ubigeo_provincia, by = c("region" = "ubigeo5"))
 
-#eliminar las columnas repetidas del join fallido 
-enaho <- enaho %>%
-  select(-ends_with(".x"), -ends_with(".y"))
+#revisar que codigos quedan sin match
+anti_join(enaho %>% select(region) %>% distinct(),
+          ubigeo_provincia,
+          by = c("region" = "ubigeo5"))
 
-#eliminar filas con NA en las variables geograficas 
-enaho <- enaho %>%
-  filter(!is.na(provincia), !is.na(distrito))
 
-#Verificar que quedo limpio 
-glimpse(enaho)
-count(enaho, distrito)
-count(enaho, provincia)
+
+
 
 #Exportar 
 library(dplyr)
