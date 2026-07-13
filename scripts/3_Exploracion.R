@@ -42,8 +42,20 @@ enaho <- enaho %>%
   ) %>%
   distinct()
 
-# 1. ESTADÍSTICOS DESCRIPTIVOS -------------------------------
-# Gasto total del hogar
+
+#1. Construir las variables: gasto total e ingreso total
+library(tidyverse)
+
+# a. crear gasto total 
+enaho <- enaho %>%
+  mutate(
+    gasto_total = rowSums(
+      select(., alimentos, cultura, vivienda_servicios, cuidados_personales),
+      na.rm = TRUE
+    )
+  )
+#exploracion del gasto total 
+# Estadísticos descriptivos
 summary_gasto <- enaho %>%
   summarise(
     min = min(gasto_total, na.rm = TRUE),
@@ -54,38 +66,41 @@ summary_gasto <- enaho %>%
     max = max(gasto_total, na.rm = TRUE)
   )
 
-# Ingreso laboral promedio
-summary_ingreso <- enaho %>%
-  summarise(
-    min = min(ingreso_promedio, na.rm = TRUE),
-    q25 = quantile(ingreso_promedio, 0.25, na.rm = TRUE),
-    mediana = median(ingreso_promedio, na.rm = TRUE),
-    promedio = mean(ingreso_promedio, na.rm = TRUE),
-    q75 = quantile(ingreso_promedio, 0.75, na.rm = TRUE),
-    max = max(ingreso_promedio, na.rm = TRUE)
-)
-
-#2. GRAFICOS UNIVARIADOS --------------------------------------------
-
-# Histograma de gasto
-grafico_gasto <- ggplot(enaho, aes(x = gasto_total)) +
+# Histograma
+grafico_gasto <- ggplot(enaho %>% filter(gasto_total < 5000),
+                        aes(x = gasto_total)) +
   geom_histogram(fill = "#4A7C59", color = "white", bins = 50) +
   scale_x_continuous(labels = comma) +
-  labs(title = "Distribución del gasto total del hogar",
+  labs(title = "Distribución del gasto total del hogar (<5000 S/)",
        x = "Gasto mensual (S/)", y = "Frecuencia")
-# Histograma de ingreso
-ggplot(enaho, aes(x = ingreso_promedio)) +
-  geom_histogram(fill = "#2E5B88", color = "white", bins = 50) +
-  scale_x_continuous(labels = comma) +
-  labs(title = "Distribución del ingreso laboral promedio",
-       x = "Ingreso mensual (S/)", y = "Frecuencia")
 
-# Crear carpeta de salida 
+
+#exportar 
 ruta_salida <- "outputs/outputs_exploracion"
 if (!dir.exists(ruta_salida)) {
   dir.create(ruta_salida, recursive = TRUE)
 }
 
-# Exportar tablas descriptivas
 write_csv(summary_gasto, file.path(ruta_salida, "Tabla_Estadisticos_Gasto.csv"))
-write_csv(summary_ingreso, file.path(ruta_salida, "Tabla_Estadisticos_Ingreso.csv"))
+
+ggsave(file.path(ruta_salida, "Grafico_Histograma_Gasto.png"),
+       plot = grafico_gasto, width = 8, height = 5, bg = "white")
+
+#b.Crear variable de ingreso total 
+library(tidyverse)
+ingresos_tratados <- import("datos/procesados/enaho_2025_ingresos_tratados.csv")
+
+#Crear ingreso_persona (suma de las tres fuentes)
+ingresos_tratados <- ingresos_tratados %>%
+  mutate(
+    ingreso_persona = ingreso_dep + ingreso_indep_dinero + ingreso_indep_especie
+  )
+#Agregar a nivel hogar
+ingreso_hogar <- ingresos_tratados %>%
+  group_by(CONGLOME, VIVIENDA, HOGAR) %>%
+  summarise(
+    ingreso_total = sum(ingreso_persona, na.rm = TRUE),
+    .groups = "drop"
+  )
+#Exportar ingreso total por hogar
+write_csv(ingreso_hogar, "datos/procesados/enaho_2025_ingreso_total.csv")
