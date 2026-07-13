@@ -27,19 +27,34 @@ mod605 <- import("datos/crudos/Enaho01-2025-605.csv", encoding="Latin-1")
 mod606D <- import("datos/crudos/Enaho01-2025-606D.csv", encoding="Latin-1")
 
 #3. Union de bases--------------------------
-keys_hogar <- c("AÑO", "MES", "CONGLOME", "VIVIENDA", "HOGAR","UBIGEO", "DOMINIO", "ESTRATO", "NCONGLOME", "SUB_CONGLOME")
+keys_hogar <- c("AÑO", "MES", "CONGLOME", "VIVIENDA", "HOGAR","UBIGEO", "DOMINIO", "ESTRATO")
+
+#Revisar los nombres de las columnas para identificar la variable de gasto
 names(mod601)
 names(mod606)
+names(mod605)
+names(mod606D)
 
+#Revisar si la variable de gastos está en numérico o caracter 
 str(mod601$P601C)
+str(mod605$P605B)
+str(mod606D$P606F)
+str(mod606$P606B)
 
+#Convertimos a numéricas las variables para consolidar la base de datos 
 mod601 <- mod601 %>%
   mutate(P601C = as.numeric(P601C))
+
 mod606 <- mod606 %>%
   mutate(P606B = as.numeric(P606B))
 
-mod601_hogar <- mod601 %>%
-  mutate(P601C = as.numeric(P601C)) %>%
+mod605 <- mod605 %>% 
+  mutate(P605B = as.numeric(P605B))
+
+mod606D <- mod606d %>% 
+  mutate(P606F = as.numeric(P606F))
+
+
   group_by(across(all_of(keys_hogar))) %>%
   summarise(gasto_alimentos = sum(P601C, na.rm = TRUE), .groups = "drop")
 
