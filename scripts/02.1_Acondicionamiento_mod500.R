@@ -52,3 +52,5 @@ ingresos_tratados <- ingresos_sel %>%
     ingreso_indep_dinero   = replace_na(ingreso_indep_dinero, median(ingreso_indep_dinero, na.rm = TRUE)),
     ingreso_indep_especie  = replace_na(ingreso_indep_especie, median(ingreso_indep_especie, na.rm = TRUE))
   )
+# 5. EXPORTACIÓN ---------------------------------------------------------------
+write_csv(ingresos_tratados, "datos/procesados/enaho_2025_ingresos_tratados.csv")
