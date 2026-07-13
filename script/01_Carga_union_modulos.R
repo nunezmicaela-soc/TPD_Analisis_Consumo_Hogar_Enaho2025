@@ -76,18 +76,17 @@ mod606D_hogar <- mod606D %>%
 enaho_2025 <- mod601_hogar %>%
   left_join(mod606_hogar, by = keys_hogar)
 
-#4. Unimos las bases resumidas 
+#4. Unimos las bases resumidas------------------------------------------------- 
 enaho_2025 <- mod601 %>%
   left_join(mod606_hogar,  by = keys_hogar) %>%
   left_join(mod605_hogar,  by = keys_hogar) %>%
   left_join(mod606D_hogar, by = keys_hogar)
 
-#4. Exportamos base de datos creada------------------------
-renv::snapshot() 
+#5. Exportamos base de datos creada------------------------------------------
+renv::snapshot() #para guardar los paquetes en el proyecto 
 library(arrow)
-write_parquet(enaho_2025, "datos/procesados/enaho_2025_230626.parquet")
-enaho_2025 <- read_parquet("datos/procesados/enaho_2025_230626.parquet")
-
+write_parquet(enaho_2025, "datos/procesados/enaho_2025_uniongastos.parquet") #exporta la base consolidada en formato parquet
+enaho_2025 <- read_parquet("datos/procesados/enaho_2025_uniongastos.parquet") #vuelve a cargar la base desde el disco para verificar que se guardó correctamente
 
   
   
