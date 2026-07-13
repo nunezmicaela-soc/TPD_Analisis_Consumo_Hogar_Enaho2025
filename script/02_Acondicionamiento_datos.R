@@ -98,41 +98,29 @@ write_csv(reporte_nas, "outputs/Reporte_Datos_Perdidos_ENAHO.csv")
 #3.3 Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
 library(readr)
 # Debido a que la base tiene una sola columna separado por ";" read_delim (más explícito)
-ubigeo_catalogo <- read_csv2("datos/crudos/ubigeo_inei_2025.csv")
+library(readr)
 ubigeo_catalogo <- read_delim("datos/crudos/ubigeo_inei_2025.csv", delim = ";")
 glimpse(ubigeo_catalogo)
 
+
 #La base consolidada tiene la columna de ubigeo con 5 digitos, mientras que el catalogo que baje 6 digitos
-#Reducir el catalogo a 5 digitos 
+#Conservar los 6 dígitos 
 ubigeo_catalogo <- ubigeo_catalogo %>%
-  mutate(ubigeo5 = substr(ubigeo, 1, 5)) %>%   # recorta a 5 dígitos
-  select(ubigeo5, departamento, provincia, distrito) %>%
+  select(ubigeo, departamento, provincia, distrito) %>%
   distinct()
 
-#reducir a nivel de provincia
-ubigeo_provincia <- ubigeo_catalogo %>%
-  group_by(ubigeo5) %>%
-  summarise(provincia = first(provincia)) %>%
-  ungroup()
-
-str(enaho$region)
-head(ubigeo_catalogo$ubigeo5)
-
-# Normalizar region en enaho a 5 dígitos con ceros a la izquierda
+#normalizar con ENAHO, llevandolo con a 6 digitos con ceros a la izquierda 
 enaho <- enaho %>%
-  mutate(region = str_pad(region, 5, pad = "0"))
+  mutate(region6 = str_pad(region, 6, pad = "0"))
 
 #hacer el join
 enaho <- enaho %>%
-  left_join(ubigeo_provincia, by = c("region" = "ubigeo5"))
+  left_join(ubigeo_catalogo, by = c("region6" = "ubigeo"))
 
-#revisar que codigos quedan sin match
-anti_join(enaho %>% select(region) %>% distinct(),
-          ubigeo_provincia,
-          by = c("region" = "ubigeo5"))
-
-
-
+#verificamos coincidencias 
+anti_join(enaho %>% select(region6) %>% distinct(),
+          ubigeo_catalogo,
+          by = c("region6" = "ubigeo"))
 
 
 #Exportar 
