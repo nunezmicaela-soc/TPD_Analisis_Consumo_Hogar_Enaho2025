@@ -23,3 +23,20 @@ ingresos_sel <- mod500 %>%
     ingreso_indep_especie = P530B  # ganancia neta independientes (especie)
   )
 glimpse(ingresos_sel)
+
+# 3. DIAGNÓSTICO DE NAs --------------------------------------------------------
+grafico_nas500 <- gg_miss_var(ingresos_sel, show_pct = TRUE) +
+  labs(title = "Porcentaje de NAs en módulo 500",
+       subtitle = "Ingresos laborales - ENAHO 2025") +
+  theme_minimal()
+
+print(grafico_nas500)
+
+ggsave("outputs/Grafico_NAs_Mod500.png", plot = grafico_nas)
+
+reporte_nas500 <- ingresos_sel %>%
+  summarise(across(everything(), ~ round(sum(is.na(.)) / n() * 100, 2))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "porcentaje_na")
+
+write_csv(reporte_nas, "outputs/Reporte_NAs_Mod500.csv")
+
