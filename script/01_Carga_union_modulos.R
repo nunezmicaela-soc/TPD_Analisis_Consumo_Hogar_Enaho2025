@@ -34,6 +34,7 @@ names(mod601)
 names(mod606)
 names(mod605)
 names(mod606D)
+glimpse(mod601)
 
 #Revisar si la variable de gastos está en numérico o caracter 
 str(mod601$P601C)
@@ -76,7 +77,7 @@ enaho_2025 <- mod601_hogar %>%
   left_join(mod606_hogar, by = keys_hogar)
 
 #4. Unimos las bases resumidas 
-enaho_2025 <- mod601_hogar %>%
+enaho_2025 <- mod601 %>%
   left_join(mod606_hogar,  by = keys_hogar) %>%
   left_join(mod605_hogar,  by = keys_hogar) %>%
   left_join(mod606D_hogar, by = keys_hogar)
