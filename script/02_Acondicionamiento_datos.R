@@ -76,7 +76,7 @@ grafico_nas <- gg_miss_var(enaho, show_pct = TRUE) +
   ) +
   theme_minimal()
 
-# Mostramos el gráfico en el panel de RStudio
+# Mostramos el gráfico en el panel de RStudio-----------------------------------
 print(grafico_nas)
 
 # Exportamos el gráfico a nuestra carpeta de outputs
@@ -85,7 +85,7 @@ ggsave("03_outputs/Grafico_NAs_ENAHO.png", plot = grafico_nas,
   theme_minimal()
 
 # 3.2 Reporte Tabular
-# Calculamos el % de NAs por variable y lo guardamos en CSV
+# Calculamos el % de NAs por variable y lo guardamos en CSV---------------------
 reporte_nas <- enaho %>%
   summarise(across(everything(), ~ round(sum(is.na(.)) / n() * 100, 2))) %>%
   pivot_longer(everything(), names_to = "variable", values_to = "porcentaje_na") %>%
@@ -93,7 +93,14 @@ reporte_nas <- enaho %>%
 
 write_csv(reporte_nas, "outputs/Reporte_Datos_Perdidos_ENAHO.csv")
 
+#3.3 Importamos base de datos de empleo e ingreso módulo 500
+#Carga de base de datos
+mod500 <- import ("datos/crudos/Enaho01a-2025-500.csv")
 
+# Seleccionamos ingreso principal y llaves de persona
+ingresos_sel <- mod500 %>%
+  select(AÑO, MES, CONGLOME, VIVIENDA, HOGAR, CODPERSO,
+         ingreso_prin = P524A1)
 
 #Cambiar "ubigeo" por el nombre de los lugares, para ello importare la base de datos
 library(readr)
