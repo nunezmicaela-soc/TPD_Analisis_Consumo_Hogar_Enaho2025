@@ -42,6 +42,40 @@ enaho <- enaho %>%
   ) %>%
   distinct()
 
+# 1. ESTADÍSTICOS DESCRIPTIVOS -------------------------------
+# Gasto total del hogar
+summary_gasto <- enaho %>%
+  summarise(
+    min = min(gasto_total, na.rm = TRUE),
+    q25 = quantile(gasto_total, 0.25, na.rm = TRUE),
+    mediana = median(gasto_total, na.rm = TRUE),
+    promedio = mean(gasto_total, na.rm = TRUE),
+    q75 = quantile(gasto_total, 0.75, na.rm = TRUE),
+    max = max(gasto_total, na.rm = TRUE)
+  )
 
+# Ingreso laboral promedio
+summary_ingreso <- enaho %>%
+  summarise(
+    min = min(ingreso_promedio, na.rm = TRUE),
+    q25 = quantile(ingreso_promedio, 0.25, na.rm = TRUE),
+    mediana = median(ingreso_promedio, na.rm = TRUE),
+    promedio = mean(ingreso_promedio, na.rm = TRUE),
+    q75 = quantile(ingreso_promedio, 0.75, na.rm = TRUE),
+    max = max(ingreso_promedio, na.rm = TRUE)
+)
 
+#2. GRAFICOS UNIVARIADOS --------------------------------------------
 
+# Histograma de gasto
+grafico_gasto <- ggplot(enaho, aes(x = gasto_total)) +
+  geom_histogram(fill = "#4A7C59", color = "white", bins = 50) +
+  scale_x_continuous(labels = comma) +
+  labs(title = "Distribución del gasto total del hogar",
+       x = "Gasto mensual (S/)", y = "Frecuencia")
+# Histograma de ingreso
+ggplot(enaho, aes(x = ingreso_promedio)) +
+  geom_histogram(fill = "#2E5B88", color = "white", bins = 50) +
+  scale_x_continuous(labels = comma) +
+  labs(title = "Distribución del ingreso laboral promedio",
+       x = "Ingreso mensual (S/)", y = "Frecuencia")
